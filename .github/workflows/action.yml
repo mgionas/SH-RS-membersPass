@@ -1,0 +1,144 @@
+name: Snippets CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - production
+
+jobs:
+  prepare:
+    runs-on: self-hosted
+    steps:
+      - name: Clean server & clone new deployment
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Remove previous temp project folder
+            rm -rf /tmp/${{ vars.PROJECT_NAME }} || true
+
+            # Clone the latest repo into the temp folder
+            cd /tmp/
+            git clone git@github.com:${{ github.repository }}.git
+
+            # Store environment variables in .env file
+            if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+              echo "${{ vars.ENV_DEV }}" > /tmp/${{ vars.PROJECT_NAME }}/.env
+            else
+              echo "${{ vars.ENV_PROD }}" > /tmp/${{ vars.PROJECT_NAME }}/.env
+            fi
+
+  build:
+    runs-on: self-hosted
+    needs: prepare
+    steps:
+      - name: Clean up any existing temporary Docker container
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker stop "${{ vars.PROJECT_NAME }}-temp" || true
+            docker rm "${{ vars.PROJECT_NAME }}-temp" || true
+
+      - name: Build and run temporary Docker container
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /tmp/${{ vars.PROJECT_NAME }}
+
+            # Start a new container in the correct Docker network
+            docker run -d -t --network nginxproxymanager_default --restart unless-stopped --name "${{ vars.PROJECT_NAME }}-temp" \
+              -e APP_PATH=/app \
+              -e DOCUMENT_ROOT=/public/ \
+              -e PHP_POST_MAX_SIZE=100M \
+              -e PHP_UPLOAD_MAX_FILESIZE=100M \
+              -v ${{ vars.PROJECT_VOLUME }}:/app/storage \
+              -w /app \
+              shinsenter/php:8.2-fpm-nginx
+
+            # Install essential packages inside container
+            docker exec -t "${{ vars.PROJECT_NAME }}-temp" sh -c "apt-get update"
+            docker exec -t "${{ vars.PROJECT_NAME }}-temp" sh -c "apt-get -y install nano unzip curl redis-server gnupg"
+
+            # Copy project into the container
+            docker cp /tmp/${{ vars.PROJECT_NAME }}/. "${{ vars.PROJECT_NAME }}-temp":/app
+
+  configure:
+    runs-on: self-hosted
+    needs: build
+    steps:
+      - name: Configure and set up the Docker container
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Install Laravel PHP extensions
+            docker exec -t "${{ vars.PROJECT_NAME }}-temp" sh -c "install-php-extensions intl gd zip exif pdo_mysql"
+
+            # Install Composer dependencies
+            docker exec -t "${{ vars.PROJECT_NAME }}-temp" sh -c "composer install --optimize-autoloader --no-dev"
+
+            # Install Node.js
+            docker exec -t "${{ vars.PROJECT_NAME }}-temp" sh -c "\
+              curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+              apt-get install -y nodejs"
+
+            # Install frontend dependencies and build assets
+            docker exec -t "${{ vars.PROJECT_NAME }}-temp" sh -c "npm install --legacy-peer-deps"
+            docker exec -t "${{ vars.PROJECT_NAME }}-temp" sh -c "npm run build"
+
+            # Set correct permissions
+            docker exec -t "${{ vars.PROJECT_NAME }}-temp" sh -c "chown -R www-data:www-data /app"
+
+  deploy:
+    runs-on: self-hosted
+    needs: configure
+    steps:
+      - name: Swap Docker containers to activate new deployment
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Choose container name and conditional network based on branch
+            if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            CONTAINER_NAME="${{ vars.PROJECT_NAME }}-dev"
+            CONDITIONAL_NETWORK="silk-academy-next-dev"
+            else
+            CONTAINER_NAME="${{ vars.PROJECT_NAME }}-prod"
+            CONDITIONAL_NETWORK="silk-academy-next-prod"
+            fi
+
+            # Stop & remove existing container if present
+            docker stop "$CONTAINER_NAME" || true
+            docker rm "$CONTAINER_NAME" || true
+
+            # Rename the temporary container to the target container name
+            docker rename "${{ vars.PROJECT_NAME }}-temp" "$CONTAINER_NAME"
+
+            # Generate Laravel app key and link storage
+            docker exec -t "$CONTAINER_NAME" sh -c "php artisan key:generate --force && php artisan storage:link"
+
+  clean:
+    runs-on: self-hosted
+    needs: deploy
+    steps:
+      - name: Clean up temporary files from server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            rm -rf /tmp/${{ vars.PROJECT_NAME }} || true

@@ -51,11 +51,11 @@ export default function Dashboard({ member }: { member: any }) {
     });
 
     const SubmitEmailInvitation = () => {
-            router.post(sendEmailInvitation.url())
+            router.post(sendEmailInvitation.url(), member)
     }
 
     const SubmitSMSInvitation = () => {
-        router.post(sendSMSInvitation.url())
+        router.post(sendSMSInvitation.url(), member)
 
     }
 
