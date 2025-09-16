@@ -19,10 +19,10 @@ class OnboardingController extends Controller
         if (!$member) return redirect()->route('404');
 
         $hasPasses = $member->passes()->exists();
+        if($hasPasses) return Inertia::render('info', ['info' => 'Member pass already installed!']);
 
         return Inertia::render('onboarding/index', [
-            'member' => $member,
-            'hasPasses' => $hasPasses,
+            'member' => $member
         ]);
     }
 
