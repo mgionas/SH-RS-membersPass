@@ -62,7 +62,7 @@ class MembersController extends Controller
         $content = sprintf(
             'Hello %s, You have been invited to join a select circle at the Rolling Stone Rooftop Bar. As one of our chosen guests, you\'re invited to apply for a digital access card - personalized and designed for your Wallet. to get pass, follow the link: %s',
             $request->name,
-            config('app.url') . '/' . $request->member_id
+            config('app.url') . '/onboarding/' . $request->member_id
         );
 
         $sendSMS = Http::asForm()->post('https://sender.ge/api/send.php', [

@@ -4,30 +4,6 @@ import { Head, router } from '@inertiajs/react';
 import { CircleX, Info } from 'lucide-react';
 import { UAParser } from 'ua-parser-js';
 
-const DeviceComponent = ({ os }: { os: any }) => {
-    switch (os.name) {
-        case 'Android':
-            return (
-                <div className={'rounded-xl border border-neutral-700 bg-neutral-900 p-4'}>
-                    {/*<img src={'/logos/google.svg'} width={'130'} />*/}
-                    Generate Pass
-                </div>
-            );
-        case 'iOS':
-            return (
-                <div className={'rounded-xl border border-neutral-700 bg-neutral-900 p-4'}>
-                    <img src={'/logos/apple.svg'} width={'130'} />
-                </div>
-            );
-        default:
-            return (
-                <div className={'flex w-full items-center gap-2 rounded-xl border border-red-500 bg-red-500/10 p-6 text-red-500'}>
-                    <CircleX />
-                    <span className={'text-sm text-white'}>Available only Android or IOS devices</span>
-                </div>
-            );
-    }
-};
 export default function OnboardingPage({ member }: { member: any }) {
     const { device, os } = UAParser();
     const createPassHandler = () => {
@@ -69,7 +45,7 @@ export default function OnboardingPage({ member }: { member: any }) {
             <div className={'flex w-96 max-w-[500px] items-center justify-center gap-8 rounded-xl py-6'}>
                 {device?.type === 'mobile' ? (
                     <div className={'flex flex-col gap-4'}>
-                        <Button onClick={() => createPassHandler()}></Button>
+                        <Button onClick={() => createPassHandler()}>Generate Pass</Button>
                     </div>
                 ) : (
                     <div className={'flex w-full items-center gap-2 rounded-xl border border-red-500 bg-red-500/10 p-6 text-red-500'}>
