@@ -87,7 +87,7 @@ class OnboardingController extends Controller
                 $template->type,
                 [
                     'name' => $member->name . ' ' . $member->surname,
-                    'member-id' => $member->special_id ?? $member->member_id,
+                    'member-id' => $member->special_id ?? $member->id,
                     'nfc-id' => $member->member_id,
                 ]
             );
@@ -123,7 +123,7 @@ class OnboardingController extends Controller
                 $template->type,
                 [
                     'name' => $member->name . ' ' . $member->surname,
-                    'member-id' => $member->special_id ?? $member->member_id,
+                    'member-id' => $member->special_id ?? $member->id,
                     'nfc-id' => $member->member_id,
                 ]
             );

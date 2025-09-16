@@ -27,9 +27,9 @@ export default function OnboardingPage({member}: { member: any }) {
                 className={'flex w-96 max-w-[500px] flex-col items-center justify-center gap-8 rounded-xl border border-neutral-500 bg-neutral-900 p-8'}>
                 <div className={'flex flex-col gap-4'}>
                     <div className={'flex gap-2 text-xl'}>
-                        <span className={'text-white'}>Hello,</span>
-                        <span className={'text-white font-semibold'}>
-                            {member.name} {member.surname}
+                        <span className={'text-white'}>Dear,</span>
+                        <span className={'text-white font-semibold capitalize'}>
+                            {member.name}
                         </span>
                     </div>
                     <div className={'flex flex-col gap-4 text-white'}>
@@ -63,10 +63,6 @@ export default function OnboardingPage({member}: { member: any }) {
                     </div>
                 )}
             </div>
-            {/*<div className={'flex gap-4'}>*/}
-            {/*    <Button onClick={() => createAndroidPassHandler()}>Generate Android Pass</Button>*/}
-            {/*    <Button onClick={() => createIosPassHandler()}>Generate Ios Pass</Button>*/}
-            {/*</div>*/}
         </div>
     );
 }

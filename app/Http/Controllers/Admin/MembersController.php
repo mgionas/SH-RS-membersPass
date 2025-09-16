@@ -31,6 +31,7 @@ class MembersController extends Controller
             'email'=>$request->email,
             'phone'=>$request->phone,
             'language'=>$request->language,
+            'special_id'=>$request->specialId
         ]);
 
         return redirect()->back()->with('success','Member added successfully');
