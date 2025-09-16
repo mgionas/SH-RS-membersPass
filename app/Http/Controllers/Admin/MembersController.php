@@ -65,14 +65,18 @@ class MembersController extends Controller
             config('app.url') . '/onboarding/' . $request->member_id
         );
 
-        $sendSMS = Http::asForm()->post('https://sender.ge/api/send.php', [
-            'apikey' => 'b7d763510c4f521ab976baccedc5149d',
-            'smsno' => 2,
-            'destination' => '514552626',
-            'content' => $content
-        ])->throw()->json();
+        try {
+            $sendSMS = Http::asForm()->post('https://sender.ge/api/send.php', [
+                'apikey' => 'b7d763510c4f521ab976baccedc5149d',
+                'smsno' => 2,
+                'destination' => $request->phone,
+                'content' => $content
+            ])->throw()->json();
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', $th->getMessage());
+        }
 
-        return dd($sendSMS);
+        return redirect()->back()->with('success','SMS sent successfully');
     }
 }
 
