@@ -166,7 +166,6 @@ export default function Dashboard({ member }: { member: any }) {
 
                     </div>
                 </div>
-                {/*<pre className={'text-white'}>{JSON.stringify(member, null, 2)}</pre>*/}
             </div>
         </AppLayout>
     );
