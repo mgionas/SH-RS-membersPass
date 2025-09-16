@@ -23,22 +23,22 @@ export default function OnboardingPage({ member }: { member: any }) {
             <div className={'py-12'}>
                 <img src={'/RollingStoneBarLogo.svg'} width={'170'} />
             </div>
-            <div className={'flex w-96 max-w-[500px] flex-col items-center justify-center gap-8 rounded-xl border bg-neutral-900 p-8'}>
+            <div className={'flex w-96 max-w-[500px] flex-col items-center justify-center gap-8 rounded-xl border border-neutral-500 bg-neutral-900 p-8'}>
                 <div className={'flex flex-col gap-4'}>
                     <div className={'flex gap-2 text-xl'}>
-                        <span>Hello,</span>
-                        <span className={'font-semibold'}>
+                        <span className={'text-white'}>Hello,</span>
+                        <span className={'text-white font-semibold'}>
                             {member.name} {member.surname}
                         </span>
                     </div>
-                    <span className={''}>
+                    <span className={'text-white'}>
                         It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.
                         The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content
                         here, content here', making it look like readable English.
                     </span>
                     <div className={'mt-4 flex gap-4 rounded-md bg-neutral-950 p-4'}>
-                        <Info />
-                        <span className={'text-sm'}>You can install only once, please please use your primary device</span>
+                        <Info className={'text-white'} />
+                        <span className={'text-white text-sm'}>You can install only once, please please use your primary device</span>
                     </div>
                 </div>
             </div>

@@ -31,7 +31,8 @@ export function CreateMemberComponent() {
         surname: '',
         email:'',
         phone:'',
-        language:''
+        language:'',
+        specialId:''
     })
 
     const SubmitHandler = () => {
@@ -86,6 +87,10 @@ export function CreateMemberComponent() {
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
+                        </div>
+                        <div className="grid gap-3">
+                            <Label htmlFor={'specialId'}>Special Id</Label>
+                            <Input name={'specialId'} placeholder="Enter phone" onChange={(e) => setData('specialId', e.target.value)} value={data.specialId} className={errors.specialId && 'border-red-500'} />
                         </div>
                     </div>
                     <DialogFooter>

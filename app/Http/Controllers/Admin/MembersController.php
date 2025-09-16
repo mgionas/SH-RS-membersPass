@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Members\StoreMemberRequest;
+use App\Lib\PassVendor;
 use App\Mail\memberInvitationMail;
 use App\Models\Members;
 use Illuminate\Http\Request;
@@ -51,6 +52,26 @@ class MembersController extends Controller
         ]);
 
         return redirect()->back()->with('success','Member added successfully');
+    }
+
+    public function updatePass(){
+        $passVendor = new PassVendor();
+
+        try {
+            $updatePass = $passVendor->getClient()->putPass(
+                'ptk_0x271',
+                '358d1ce3b89a93f445',
+                [
+                    'name' => 'Levan Kechakmadze',
+                    'member-id' => '1234',
+                    'nfc-id' => '1234',
+                ]
+            );
+        } catch (\Throwable $th) {
+            return dd($th);
+        }
+
+        return dd($updatePass);
     }
 
     public function sendEmailInvitation(){

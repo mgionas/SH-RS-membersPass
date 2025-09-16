@@ -1,12 +1,12 @@
-import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { useForm } from '@inertiajs/react';
-import { DateTime } from 'luxon';
-import { router } from '@inertiajs/react';
-import { sendEmailInvitation, sendSMSInvitation, update } from '@/routes/members/index';
+import {type BreadcrumbItem} from '@/types';
+import {Head} from '@inertiajs/react';
+import {Input} from '@/components/ui/input';
+import {Label} from '@/components/ui/label';
+import {Button} from '@/components/ui/button';
+import {useForm} from '@inertiajs/react';
+import {DateTime} from 'luxon';
+import {router} from '@inertiajs/react';
+import {sendEmailInvitation, sendSMSInvitation, updatePass, update} from '@/routes/members/index';
 import {
     Select,
     SelectContent,
@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select"
 
 import AppLayout from '@/layouts/app-layout';
-import { MailIcon, SmartphoneIcon } from 'lucide-react';
+import {MailIcon, SmartphoneIcon} from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -39,19 +39,21 @@ interface MemberFormData {
     email: string;
     phone: string;
     language: string;
+    specialId: string;
 }
 
-export default function Dashboard({ member }: { member: any }) {
-    const { data, setData, post } = useForm<MemberFormData>({
+export default function Dashboard({member}: { member: any }) {
+    const {data, setData, post} = useForm<MemberFormData>({
         name: member.name,
         surname: member.surname,
         email: member.email,
         phone: member.phone,
-        language: member.language
+        language: member.language,
+        specialId: member.specialId,
     });
 
     const SubmitEmailInvitation = () => {
-            router.post(sendEmailInvitation.url(), member)
+        router.post(sendEmailInvitation.url(), member)
     }
 
     const SubmitSMSInvitation = () => {
@@ -63,19 +65,25 @@ export default function Dashboard({ member }: { member: any }) {
         post(update.url(member.id));
     }
 
+    const updatePassHandler = () => {
+        router.post(updatePass.url());
+    }
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Dashboard" />
-            <div className={'flex w-full justify-between px-4 py-2 border-b border-neutral-100 dark:border-neutral-900'}>
+            <Head title="Dashboard"/>
+            <div
+                className={'flex w-full justify-between px-4 py-2 border-b border-neutral-100 dark:border-neutral-900'}>
                 <div></div>
                 <div className={'flex gap-2'}>
                     <Button onClick={() => UpdateHandler()} variant={'secondary'}>Update</Button>
+                    <Button onClick={() => updatePassHandler()} variant={'secondary'}>Update Pass</Button>
                     <Button onClick={() => SubmitEmailInvitation()} variant={'outline'}>
-                        <MailIcon />
+                        <MailIcon/>
                         <span>Email Invitation</span>
                     </Button>
                     <Button onClick={() => SubmitSMSInvitation()} variant={'outline'}>
-                        <SmartphoneIcon />
+                        <SmartphoneIcon/>
                         <span>SMS Invitation</span>
                     </Button>
                 </div>
@@ -115,24 +123,35 @@ export default function Dashboard({ member }: { member: any }) {
                                 />
                             </div>
                         </div>
-                        <div className={'w-full'}>
-                            <Label>Language</Label>
-                            <Select onValueChange={e => setData('language', e)} value={data.language}>
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Language" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="en">English</SelectItem>
-                                    <SelectItem value="ge">Georgian</SelectItem>
-                                </SelectContent>
-                            </Select>
+                        <div className={'flex gap-4'}>
+                            <div className={'w-full'}>
+                                <Label>Language</Label>
+                                <Select onValueChange={e => setData('language', e)} value={data.language}>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Language"/>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="en">English</SelectItem>
+                                        <SelectItem value="ge">Georgian</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className={'w-full'}>
+                                <Label>Special ID</Label>
+                                <Input
+                                    value={data.specialId}
+                                    onChange={(e) => setData('specialId', e.target.value)}
+                                />
+                            </div>
                         </div>
+
                     </div>
                     <div className={'bg-neutral-100 dark:bg-neutral-900 rounded-2xl p-4'}>
                         {member.passes ? (
                             <div className={'flex flex-col gap-4'}>
                                 {member.passes.map((pass) => (
-                                    <div key={pass.id} className={'flex flex-col p-6 border rounded-xl gap-4 bg-neutral-500/10'}>
+                                    <div key={pass.id}
+                                         className={'flex flex-col p-6 border rounded-xl gap-4 bg-neutral-500/10'}>
                                         <div className={'flex w-full justify-between'}>
                                             <div className={'text-xs'}>
                                                 {pass.template.platform}

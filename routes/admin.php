@@ -24,6 +24,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/store', [MembersController::class, 'store'])->name('store');
         Route::get('/{id}', [MembersController::class, 'view'])->name('view');
         Route::post('/update/{id}', [MembersController::class, 'update'])->name('update');
+        Route::post('/update-pass', [MembersController::class, 'updatePass'])->name('updatePass');
         Route::post('/sendEmailInvitation', [MembersController::class, 'sendEmailInvitation'])->name('sendEmailInvitation');
         Route::post('/sendSMSInvitation', [MembersController::class, 'sendSMSInvitation'])->name('sendSMSInvitation');
     });
