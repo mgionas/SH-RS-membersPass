@@ -7,3 +7,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/webhook', function (Request $request) {
     Log::info(json_encode($request->all()));
 });
+
+Route::get('/webhookget', function (Request $request) {
+    Log::info(json_encode($request->all()));
+});
