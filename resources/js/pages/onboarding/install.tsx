@@ -6,13 +6,13 @@ const DeviceComponent = ({ os, url }:{os:any, url:string}) => {
     switch (os.name) {
         case 'Android':
             return (
-                <a href={url} className={'rounded-xl border border-neutral-700 bg-neutral-900 p-4'}>
+                <a href={url} className={'rounded-xl border border-neutral-700 bg-neutral-900 p-4'} target='_blank'>
                     <img src={'/logos/google.svg'} width={'130'} />
                 </a>
             );
         case 'iOS':
             return (
-                <a href={url} className={'rounded-xl border border-neutral-700 bg-neutral-900 p-4'}>
+                <a href={url} className={'rounded-xl border border-neutral-700 bg-neutral-900 p-4'}  target='_blank'>
                     <img src={'/logos/apple.svg'} width={'130'} />
                 </a>
             );
@@ -33,10 +33,10 @@ export default function OnboardingPage({pass}:{pass:any}) {
             <Head title="Dashboard" />
             <div className={'flex flex-col items-center justify-center gap-8 bg-neutral-900 p-8 rounded-xl border border-neutral-500 w-96 max-w-[500px]'}>
                 <div className={'flex flex-col gap-4'}>
-                    <span className={'text-white'}>Welcome to Onboarding!</span>
-                    <div className={'mt-4 flex gap-4 rounded-md bg-neutral-900 p-4'}>
+                    <span className={'text-white w-full text-center'}>Your pass is ready!</span>
+                    <div className={'mt-4 flex gap-4 rounded-md bg-neutral-950 p-4'}>
                         <Info className={'text-white'} />
-                        <span className={'text-white text-sm'}>You can install only once, please please use your primary device</span>
+                        <span className={'text-white text-sm'}>Click button below and add pass within your wallet</span>
                     </div>
                 </div>
                 <div className={'flex flex-col gap-4'}>

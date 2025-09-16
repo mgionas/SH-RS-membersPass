@@ -9,10 +9,15 @@ use App\Models\PassTemplates;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Inertia\Inertia;
+use App\Actions\Admin\UpdatePassDatabase;
 use function PHPUnit\Framework\isEmpty;
 
 class OnboardingController extends Controller
 {
+    public function __construct(
+        protected UpdatePassDatabase $updatePassDatabase
+    ){}
+
     public function index(string $id)
     {
         $member = Members::where('member_id', $id)->select(['name', 'surname', 'language', 'member_id'])->first();
@@ -39,34 +44,35 @@ class OnboardingController extends Controller
         // if Removed
         if ($getPass->status === 'Removed') return Inertia::render('error', ['error' => 'Pass removed!']);
 
-        // check status
-        $passVendor = new PassVendor();
-        try {
-            $passes = $passVendor->getClient()->findPasses($getPass->pass_type);
-
-            // Map data
-            $row = collect($passes)
-                ->map(function ($pass) {
-                    return [
-                        'pass_type' => $pass['passType'],
-                        'serial_number' => $pass['serialNumber'],
-                        'issue_date' => Carbon::parse($pass['issuedDate'])->toDateTime(),
-                        'installed_date' => Carbon::parse($pass['installedDate'])->toDateTime(),
-                        'status' => $pass['status'],
-                        'url' => $pass['urls']['landing'],
-                        'nfc_payload' => $pass['serialNumber']
-                    ];
-                })->all();
-
-            MembersPasses::upsert(
-                $row,
-                ['serial_number'],
-                ['pass_type', 'issue_date', 'installed_date', 'status', 'url'],
-            );
-
-        } catch (\Throwable $th) {
-            return Inertia::render('error', ['error' => 'Oops, Somwthing went wrong.']);
-        }
+        // Update Pass Type Database
+        $this->updatePassDatabase->handle($getPass->pass_type);
+//        $passVendor = new PassVendor();
+//        try {
+//            $passes = $passVendor->getClient()->findPasses($getPass->pass_type);
+//
+//            // Map data
+//            $row = collect($passes)
+//                ->map(function ($pass) {
+//                    return [
+//                        'pass_type' => $pass['passType'],
+//                        'serial_number' => $pass['serialNumber'],
+//                        'issue_date' => Carbon::parse($pass['issuedDate'])->toDateTime(),
+//                        'installed_date' => Carbon::parse($pass['installedDate'])->toDateTime(),
+//                        'status' => $pass['status'],
+//                        'url' => $pass['urls']['landing'],
+//                        'nfc_payload' => $pass['serialNumber']
+//                    ];
+//                })->all();
+//
+//            MembersPasses::upsert(
+//                $row,
+//                ['serial_number'],
+//                ['pass_type', 'issue_date', 'installed_date', 'status', 'url'],
+//            );
+//
+//        } catch (\Throwable $th) {
+//            return Inertia::render('error', ['error' => 'Oops, Somwthing went wrong.']);
+//        }
 
 
         // return

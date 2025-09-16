@@ -1,20 +1,24 @@
 import {Button} from '@/components/ui/button';
 import {createAndroidPass, createIosPass} from '@/routes';
 import {Head, router} from '@inertiajs/react';
-import {CircleX, Info} from 'lucide-react';
+import {CircleX, Info, LoaderCircle, MoveRightIcon} from 'lucide-react';
 import {UAParser} from 'ua-parser-js';
+import {useState} from "react";
 
 export default function OnboardingPage({member}: { member: any }) {
+    const [loading, setLoading] = useState(false);
     const {device, os} = UAParser();
     const createPassHandler = () => {
+        setLoading(true)
         switch (os.name) {
             case 'Android':
-                router.post(createAndroidPass.url(), member);
+                router.post(createAndroidPass.url(), member, {onFinish: () => setLoading(false)});
                 break;
             case 'iOS':
-                router.post(createIosPass.url(), member);
+                router.post(createIosPass.url(), member, {onFinish: () => setLoading(false)});
                 break;
         }
+
     };
 
     return (
@@ -53,7 +57,19 @@ export default function OnboardingPage({member}: { member: any }) {
             <div className={'flex w-96 max-w-[500px] items-center justify-center gap-8 rounded-xl py-6'}>
                 {device?.type === 'mobile' ? (
                     <div className={'flex flex-col gap-4'}>
-                        <Button onClick={() => createPassHandler()}>Generate Pass</Button>
+                        <Button onClick={() => createPassHandler()} size={'lg'} disabled={loading}>
+                            {loading ? (
+                                <>
+                                    <span>Loading</span>
+                                    <LoaderCircle className={'animate-spin'}/>
+                                </>
+                            ) : (
+                                <>
+                                    <span>Get Pass</span>
+                                    <MoveRightIcon />
+                                </>
+                            )}
+                        </Button>
                     </div>
                 ) : (
                     <div

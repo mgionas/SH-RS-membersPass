@@ -60,10 +60,10 @@ class MembersController extends Controller
 
         try {
             $updatePass = $passVendor->getClient()->putPass(
-                'ptk_0x271',
-                '358d1ce3b89a93f445',
+                'ptk_0x26e',
+                '3d9a26ad4bc7d2f527',
                 [
-                    'name' => 'Levan Kechakmadze',
+                    'name' => 'Name Surname',
                     'member-id' => '1234',
                     'nfc-id' => '1234',
                 ]
