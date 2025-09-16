@@ -25,7 +25,7 @@ export default function Dashboard({passTemplates}:{passTemplates:any}) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className={'flex py-2 px-4 w-full justify-between border-b border-neutral-900'}>
+            <div className={'flex py-2 px-4 w-full justify-between border-b border-neutral-100 dark:border-neutral-900'}>
                 <div>
 
                 </div>

@@ -34,7 +34,7 @@ export default function Dashboard({members}:{members:any}) {
                 {members ? (
                     <div className={'flex flex-col w-full text-sm'}>
                         {/* Header */}
-                        <div className={'p-6 rounded-sm font-bold grid grid-cols-6 even:bg-neutral even:dark:bg-neutral-900'}>
+                        <div className={'p-6 rounded-sm font-bold grid grid-cols-6 even:bg-neutral-100 even:dark:bg-neutral-900'}>
                             <span>Name</span>
                             <span>Email</span>
                             <span>Phone</span>
@@ -43,7 +43,7 @@ export default function Dashboard({members}:{members:any}) {
                         </div>
                         {/* Data */}
                         {members.map((member, i) => (
-                            <Link href={view.url(member.member_id)} key={i} className={'items-center p-4 rounded-sm grid grid-cols-6 border border-gray-50/0 even:bg-neutral transition-all even:dark:bg-neutral-900 hover:border-blue-500'}>
+                            <Link href={view.url(member.member_id)} key={i} className={'items-center p-4 rounded-sm grid grid-cols-6 border border-gray-50/0 even:bg-neutral-50 transition-all even:dark:bg-neutral-900 hover:border-blue-500'}>
                                 <span>{member.name} {member.surname}</span>
                                 <span>{member.email}</span>
                                 <span>{member.phone}</span>

@@ -43,4 +43,8 @@ return [
     'brevo' => [
         'key' => env('BREVO_API_KEY'),
     ],
+
+    'senderge' => [
+        'key' => env('SENDER_GE_API_KEY'),
+    ]
 ];

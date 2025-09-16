@@ -88,12 +88,14 @@ class MembersController extends Controller
         );
 
         try {
+
             $sendSMS = Http::asForm()->post('https://sender.ge/api/send.php', [
-                'apikey' => 'b7d763510c4f521ab976baccedc5149d',
+                'apikey' => config('services.sender.apikey'),
                 'smsno' => 2,
                 'destination' => $request->phone,
                 'content' => $content
             ])->throw()->json();
+
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', $th->getMessage());
         }

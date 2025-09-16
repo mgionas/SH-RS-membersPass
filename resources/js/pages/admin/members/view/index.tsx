@@ -49,7 +49,7 @@ export default function Dashboard({member}: { member: any }) {
         email: member.email,
         phone: member.phone,
         language: member.language,
-        specialId: member.specialId,
+        specialId: member.special_id,
     });
 
     const SubmitEmailInvitation = () => {
