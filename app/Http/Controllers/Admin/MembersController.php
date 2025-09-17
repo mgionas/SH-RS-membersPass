@@ -97,7 +97,7 @@ class MembersController extends Controller
             ])->throw()->json();
 
         } catch (\Throwable $th) {
-            return redirect()->back()->with('error', $th->getMessage());
+            return dd($th);
         }
 
         return redirect()->back()->with('success','SMS sent successfully');
