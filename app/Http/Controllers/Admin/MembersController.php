@@ -88,9 +88,8 @@ class MembersController extends Controller
         );
 
         try {
-
             $sendSMS = Http::asForm()->post('https://sender.ge/api/send.php', [
-                'apikey' => config('services.sender.apikey'),
+                'apikey' => config('services.senderge.key'),
                 'smsno' => 2,
                 'destination' => $request->phone,
                 'content' => $content
