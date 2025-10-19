@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\MembersController;
 use App\Http\Controllers\Admin\PassTemplatesController;
 use App\Http\Controllers\Admin\GeneratedPassesController;
+use App\Http\Controllers\Admin\EntriesController;
 
 Route::middleware('auth')->group(function () {
     Route::prefix('pass-templates')->name('passTemplates.')->group(function () {
@@ -27,5 +28,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/update-pass', [MembersController::class, 'updatePass'])->name('updatePass');
         Route::post('/sendEmailInvitation', [MembersController::class, 'sendEmailInvitation'])->name('sendEmailInvitation');
         Route::post('/sendSMSInvitation', [MembersController::class, 'sendSMSInvitation'])->name('sendSMSInvitation');
+    });
+
+    Route::prefix('entries')->name('entries.')->group(function () {
+        Route::get('/', [EntriesController::class, 'index'])->name('index');
     });
 });

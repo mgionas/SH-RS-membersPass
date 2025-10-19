@@ -3,7 +3,7 @@ import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
-import { Folder, LayoutGrid, Users } from 'lucide-react';
+import {DoorOpen, Folder, LayoutGrid, Users} from 'lucide-react';
 import { NavFooter } from '@/components/nav-footer';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 
@@ -19,6 +19,11 @@ const mainNavItems: NavItem[] = [
         title: 'Members',
         href: '/members',
         icon: Users,
+    },
+    {
+        title: 'Entries',
+        href: '/entries',
+        icon: DoorOpen,
     },
 ];
 

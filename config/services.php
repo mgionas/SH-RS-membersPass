@@ -46,5 +46,7 @@ return [
 
     'senderge' => [
         'key' => env('SENDER_GE_API_KEY'),
-    ]
+    ],
+
+    'api_key' => env('API_KEY'),
 ];
