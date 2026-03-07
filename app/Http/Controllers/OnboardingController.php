@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\PassNinja\PassNinjaActions;
 use App\Lib\PassVendor;
 use App\Models\Members;
 use App\Models\MembersPasses;
@@ -15,7 +16,8 @@ use function PHPUnit\Framework\isEmpty;
 class OnboardingController extends Controller
 {
     public function __construct(
-        protected UpdatePassDatabase $updatePassDatabase
+        protected UpdatePassDatabase $updatePassDatabase,
+        protected PassNinjaActions $passNinjaActions,
     ){}
 
     public function index(string $id)
@@ -86,19 +88,15 @@ class OnboardingController extends Controller
 
         $member = Members::where('member_id', $request->member_id)->first();
         $template = PassTemplates::where('id', 1)->first();
-        $passVendor = new PassVendor();
 
         try {
-            $generatedPasses = $passVendor->getClient()->createPass(
+            $generatedPasses = $this->passNinjaActions->createPass(
                 $template->type,
-                [
-                    'name' => $member->name . ' ' . $member->surname,
-                    'member-id' => $member->special_id ?? $member->id,
-                    'nfc-id' => $member->member_id,
-                ]
+                $member->name . ' ' . $member->surname,
+                $member->special_id ?? $member->id
             );
 
-            $getPass = $passVendor->getClient()->getPass(
+            $getPass = $this->passNinjaActions->getPass(
                 $generatedPasses['passType'],
                 $generatedPasses['serialNumber'],
             );
@@ -122,19 +120,15 @@ class OnboardingController extends Controller
     {
         $member = Members::where('member_id', $request->member_id)->first();
         $template = PassTemplates::where('id', 2)->first();
-        $passVendor = new PassVendor();
 
         try {
-            $generatedPasses = $passVendor->getClient()->createPass(
+            $generatedPasses = $this->passNinjaActions->createPass(
                 $template->type,
-                [
-                    'name' => $member->name . ' ' . $member->surname,
-                    'member-id' => $member->special_id ?? $member->id,
-                    'nfc-id' => $member->member_id,
-                ]
+                $member->name . ' ' . $member->surname,
+                $member->special_id ?? $member->id
             );
 
-            $getPass = $passVendor->getClient()->getPass(
+            $getPass = $this->passNinjaActions->getPass(
                 $generatedPasses['passType'],
                 $generatedPasses['serialNumber'],
             );
