@@ -1,7 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import { type BreadcrumbItem } from '@/types';
-import { Button } from '@/components/ui/button';
-import { BrushCleaning, EllipsisIcon, LinkIcon } from 'lucide-react';
+import { BrushCleaning } from 'lucide-react';
 import { view } from '@/routes/members'
 import { CreateMemberComponent } from '@/pages/admin/members/_components/createMemberComponent';
 
@@ -22,9 +21,9 @@ export default function Dashboard({members}:{members:any}) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className={'flex py-2 px-4 w-full justify-between'}>
-                <div>
-
+            <div className={'flex py-2 px-4 w-full justify-between items-center'}>
+                <div className={'text-neutral-500 text-sm'}>
+                    Users: {members?.length}
                 </div>
                 <div>
                     <CreateMemberComponent />
@@ -49,13 +48,6 @@ export default function Dashboard({members}:{members:any}) {
                                 <span>{member.phone}</span>
                                 <span>{member.language}</span>
                                 <span>{member.status}</span>
-                                <div className={'flex w-full gap-2 justify-end'}>
-                                    <Link href={view.url(member.member_id)}>
-                                        <Button variant={'secondary'} size={'icon'} className={'cursor-pointer'}>
-                                            <EllipsisIcon />
-                                        </Button>
-                                    </Link>
-                                </div>
                             </Link>
                         ))}
                     </div>

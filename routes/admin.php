@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\MembersController;
 use App\Http\Controllers\Admin\PassTemplatesController;
-use App\Http\Controllers\Admin\GeneratedPassesController;
 use App\Http\Controllers\Admin\EntriesController;
 
 Route::middleware('auth')->group(function () {
@@ -16,10 +15,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/remove-template', [PassTemplatesController::class, 'removeTemplate'])->name('removeTemplate');
     });
 
-    Route::prefix('generated-passes')->name('generatedPasses.')->group(function () {
-        Route::get('/', [GeneratedPassesController::class, 'index'])->name('index');
-    });
-
     Route::prefix('members')->name('members.')->group(function () {
         Route::get('/', [MembersController::class, 'index'])->name('index');
         Route::post('/store', [MembersController::class, 'store'])->name('store');
@@ -28,6 +23,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/update-pass', [MembersController::class, 'updatePass'])->name('updatePass');
         Route::post('/sendEmailInvitation', [MembersController::class, 'sendEmailInvitation'])->name('sendEmailInvitation');
         Route::post('/sendSMSInvitation', [MembersController::class, 'sendSMSInvitation'])->name('sendSMSInvitation');
+        Route::delete('/{id}', [MembersController::class, 'destory'])->name('destory');
+
     });
 
     Route::prefix('entries')->name('entries.')->group(function () {

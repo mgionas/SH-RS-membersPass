@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OnboardingController;
+use App\Http\Controllers\Register\registerController;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -14,20 +15,31 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 });
 
-Route::prefix('/onboarding')->group(function () {
+Route::prefix('/onboarding')->name('onboarding')->group(function () {
     Route::get('/{id}', [OnboardingController::class, 'index'])->name('index');
     Route::post('/createAndroidPass', [OnboardingController::class, 'createAndroidPass'])->name('createAndroidPass');
     Route::post('/createIosPass', [OnboardingController::class, 'createIosPass'])->name('createIosPass');
     Route::get('/install-pass/{id}', [OnboardingController::class, 'installPass'])->name('installPass');
-})->name('onboarding');
+});
+
+
+Route::prefix('/register')->name('register')->group(function () {
+    Route::get('/', [registerController::class, 'index'])->name('.index');
+    Route::post('/store', [registerController::class, 'store'])->name('.store');
+});
 
 Route::get('/404', function () {
     return Inertia::render('404');
 })->name('404');
 
+
 Route::get('/error', function () {
     return Inertia::render('error');
 })->name('error');
+
+Route::get('/pending', function () {
+    return Inertia::render('pending');
+})->name('pending');
 
 
 require __DIR__.'/settings.php';

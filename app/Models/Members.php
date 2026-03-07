@@ -19,6 +19,9 @@ class Members extends Model
         'pass_id',
         'pass_serialNumber',
         'pass_url',
+        'date_of_birth',
+        'social_media_link',
+        'approved',
     ];
 
     public function passes(): HasMany

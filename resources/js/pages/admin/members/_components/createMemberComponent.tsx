@@ -50,14 +50,14 @@ export function CreateMemberComponent() {
                         <span>Add new member</span>
                     </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="sm:max-w-[625px]">
                     <DialogHeader>
                         <DialogTitle>Add pass template</DialogTitle>
                         <DialogDescription>
-                            Add pass template from PassNinja
+                            Add new member
                         </DialogDescription>
                     </DialogHeader>
-                    <div className="grid gap-4">
+                    <div className="grid grid-cols-2 gap-4">
                         <div className="grid gap-3">
                             <Label htmlFor={'name'}>Name</Label>
                             <Input name={'name'} placeholder="Enter name" onChange={(e) => setData('name', e.target.value)} value={data.name} className={errors.name && 'border-red-500'} />
@@ -90,7 +90,7 @@ export function CreateMemberComponent() {
                         </div>
                         <div className="grid gap-3">
                             <Label htmlFor={'specialId'}>Special Id</Label>
-                            <Input name={'specialId'} placeholder="Enter phone" onChange={(e) => setData('specialId', e.target.value)} value={data.specialId} className={errors.specialId && 'border-red-500'} />
+                            <Input name={'specialId'} placeholder="Special ID" onChange={(e) => setData('specialId', e.target.value)} value={data.specialId} className={errors.specialId && 'border-red-500'} />
                         </div>
                     </div>
                     <DialogFooter>

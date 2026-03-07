@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\PassNinja\PassNinjaActions;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 use App\Lib\PassVendor;
@@ -11,6 +12,10 @@ use App\Http\Controllers\Controller;
 
 class PassTemplatesController extends Controller
 {
+    public function __construct(
+        protected PassNinjaActions $passNinjaActions
+    ){}
+
     public function index(){
         return Inertia::render('admin/pass-templates/index',[
             'passTemplates' => PassTemplates::all()
@@ -19,18 +24,8 @@ class PassTemplatesController extends Controller
 
     public function collectTemplates()
     {
-
-        // Get Data
-        try {
-            $collector = Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'x-account-id' => config('services.passninja.account_id'),
-                'x-api-key' => config('services.passninja.api_key'),
-            ])->get('https://api.passninja.com/v1/pass_templates/')->throw()->json();
-
-        } catch (\Throwable $th) {
-            return redirect()->back()->with('error', $th->getMessage());
-        }
+        // collect
+        $collector = $this->passNinjaActions->getTemplates();
 
         // Map data
         $row = collect($collector['pass_templates'])->map(function ($passTemplate) {
@@ -44,7 +39,6 @@ class PassTemplatesController extends Controller
             ];
         })->all();
 
-
         // Update
         PassTemplates::upsert(
             $row,
@@ -57,29 +51,15 @@ class PassTemplatesController extends Controller
 
     public function viewTemplate(int $id){
         $type = PassTemplates::find($id)->type;
-        $passVendor = new PassVendor();
-
-        try {
-            $generatedPasses = $passVendor->getClient()->findPasses($type);
-        } catch (\Throwable $th) {
-            $generatedPasses = null;
-        }
+        $generatedPasses = $this->passNinjaActions->getPasses($type);
 
         return Inertia::render('admin/pass-templates/view/index',[
-            'generatedPasses' => $generatedPasses,
+            'generatedPasses' => $generatedPasses['passes'],
         ]);
     }
 
     public function removeTemplate(Request $request){
-        $passVendor = new PassVendor();
-        try {
-            $generatedPasses = $passVendor->getClient()->deletePass(
-                $request->passType,
-                $request->serialNumber
-            );
-        } catch (\Throwable $th) {
-            return redirect()->back()->with('error', $th->getMessage());
-        }
+        $this->passNinjaActions->deletePass($request->passType, $request->serialNumber);
 
         return redirect()->back()->with('success','Template removed successfully');
     }

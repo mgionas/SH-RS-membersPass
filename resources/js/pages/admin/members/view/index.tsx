@@ -6,7 +6,10 @@ import {Button} from '@/components/ui/button';
 import {useForm} from '@inertiajs/react';
 import {DateTime} from 'luxon';
 import {router} from '@inertiajs/react';
-import {sendEmailInvitation, sendSMSInvitation, updatePass, update} from '@/routes/members/index';
+import {sendEmailInvitation, sendSMSInvitation, updatePass, update, destory} from '@/routes/members';
+import {MailIcon, MoreHorizontalIcon, SmartphoneIcon} from 'lucide-react';
+import "react-day-picker/style.css";
+
 import {
     Select,
     SelectContent,
@@ -14,9 +17,19 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import {
+    ButtonGroup,
+} from "@/components/ui/button-group"
 
 import AppLayout from '@/layouts/app-layout';
-import {MailIcon, SmartphoneIcon} from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup, DropdownMenuItem,
+    DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import DatePicker from "@/components/ui/date-picker";
+import {format} from "date-fns";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -33,23 +46,16 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-interface MemberFormData {
-    name: string;
-    surname: string;
-    email: string;
-    phone: string;
-    language: string;
-    specialId: string;
-}
-
 export default function Dashboard({member}: { member: any }) {
-    const {data, setData, post} = useForm<MemberFormData>({
+    const {data, setData, post, errors} = useForm<any>({
         name: member.name,
         surname: member.surname,
         email: member.email,
         phone: member.phone,
         language: member.language,
         specialId: member.special_id,
+        dateOfBirth: member.date_of_birth,
+        socialMediaLink: member.social_media_link,
     });
 
     const SubmitEmailInvitation = () => {
@@ -69,6 +75,10 @@ export default function Dashboard({member}: { member: any }) {
         router.post(updatePass.url());
     }
 
+    const deleteMemberHandler = () => {
+        router.delete(destory.url(member.id));
+    }
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard"/>
@@ -76,16 +86,33 @@ export default function Dashboard({member}: { member: any }) {
                 className={'flex w-full justify-between px-4 py-2 border-b border-neutral-100 dark:border-neutral-900'}>
                 <div></div>
                 <div className={'flex gap-2'}>
-                    <Button onClick={() => UpdateHandler()} variant={'secondary'}>Update</Button>
                     <Button onClick={() => updatePassHandler()} variant={'secondary'}>Update Pass</Button>
-                    <Button onClick={() => SubmitEmailInvitation()} variant={'outline'}>
-                        <MailIcon/>
-                        <span>Email Invitation</span>
-                    </Button>
-                    <Button onClick={() => SubmitSMSInvitation()} variant={'outline'}>
-                        <SmartphoneIcon/>
-                        <span>SMS Invitation</span>
-                    </Button>
+
+                    <ButtonGroup>
+                        <Button onClick={() => SubmitEmailInvitation()} variant={'outline'}>
+                            <MailIcon/>
+                            <span>Email Invitation</span>
+                        </Button>
+                        <Button onClick={() => SubmitSMSInvitation()} variant={'outline'}>
+                            <SmartphoneIcon/>
+                            <span>SMS Invitation</span>
+                        </Button>
+                    </ButtonGroup>
+
+                    <DropdownMenu>
+                        <DropdownMenuTrigger>
+                            <Button variant="outline" size="icon" aria-label="More Options"><MoreHorizontalIcon /></Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuGroup>
+                                <DropdownMenuItem onClick={()=> deleteMemberHandler()}>Remove</DropdownMenuItem>
+                            </DropdownMenuGroup>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    <ButtonGroup>
+                        <Button onClick={() => UpdateHandler()} variant={'default'}>Update</Button>
+                    </ButtonGroup>
                 </div>
             </div>
             <div className="flex h-full flex-1 flex-col gap-4 px-4">
@@ -125,6 +152,22 @@ export default function Dashboard({member}: { member: any }) {
                         </div>
                         <div className={'flex gap-4'}>
                             <div className={'w-full'}>
+                                <Label>Date of birth</Label>
+                                <DatePicker
+                                    date={data.dateOfBirth ? new Date(data.dateOfBirth) : undefined}
+                                    setDate={(e) => setData("dateOfBirth", e ? format(e, "yyyy-MM-dd") : "")}
+                                />
+                            </div>
+                            <div className={'w-full'}>
+                                <Label>Social Media Link</Label>
+                                <Input
+                                    value={data.socialMediaLink}
+                                    onChange={(e) => setData('socialMediaLink', e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div className={'flex gap-4'}>
+                            <div className={'w-full'}>
                                 <Label>Language</Label>
                                 <Select onValueChange={e => setData('language', e)} value={data.language}>
                                     <SelectTrigger className="w-full">
@@ -144,7 +187,6 @@ export default function Dashboard({member}: { member: any }) {
                                 />
                             </div>
                         </div>
-
                     </div>
                     <div className={'bg-neutral-100 dark:bg-neutral-900 rounded-2xl p-4'}>
                         {member.passes ? (
@@ -182,7 +224,6 @@ export default function Dashboard({member}: { member: any }) {
 
                             </div>
                         )}
-
                     </div>
                 </div>
             </div>
