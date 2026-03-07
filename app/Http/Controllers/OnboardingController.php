@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Actions\PassNinja\PassNinjaActions;
-use App\Lib\PassVendor;
 use App\Models\Members;
 use App\Models\MembersPasses;
 use App\Models\PassTemplates;
@@ -11,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 use App\Actions\Admin\UpdatePassDatabase;
-use function PHPUnit\Framework\isEmpty;
 
 class OnboardingController extends Controller
 {
@@ -113,7 +111,7 @@ class OnboardingController extends Controller
             'nfc_payload' => $member->member_id,
         ]);
 
-        return redirect()->route('installPass', $getPass['serialNumber']);
+        return redirect()->route('onboarding.installPass', $getPass['serialNumber']);
     }
 
     public function createIosPass(Request $request)
@@ -145,6 +143,6 @@ class OnboardingController extends Controller
             'nfc_payload' => $member->member_id,
         ]);
 
-        return redirect()->route('installPass', $getPass['serialNumber']);
+        return redirect()->route('onboarding.installPass', $getPass['serialNumber']);
     }
 }
