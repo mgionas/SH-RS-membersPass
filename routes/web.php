@@ -17,9 +17,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::prefix('/onboarding')->name('onboarding')->group(function () {
     Route::get('/{id}', [OnboardingController::class, 'index'])->name('index');
-    Route::post('/createAndroidPass', [OnboardingController::class, 'createAndroidPass'])->name('createAndroidPass');
-    Route::post('/createIosPass', [OnboardingController::class, 'createIosPass'])->name('createIosPass');
-    Route::get('/install-pass/{id}', [OnboardingController::class, 'installPass'])->name('installPass');
+    Route::post('/createAndroidPass', [OnboardingController::class, 'createAndroidPass'])->name('.createAndroidPass');
+    Route::post('/createIosPass', [OnboardingController::class, 'createIosPass'])->name('.createIosPass');
+    Route::get('/install-pass/{id}', [OnboardingController::class, 'installPass'])->name('.installPass');
 });
 
 

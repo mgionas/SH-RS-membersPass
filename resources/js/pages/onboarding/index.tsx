@@ -1,5 +1,5 @@
 import {Button} from '@/components/ui/button';
-import {createAndroidPass, createIosPass} from '@/routes';
+import {createAndroidPass, createIosPass} from '@/routes/onboarding';
 import {Head, router} from '@inertiajs/react';
 import {CircleX, Info, LoaderCircle, MoveRightIcon} from 'lucide-react';
 import {UAParser} from 'ua-parser-js';
