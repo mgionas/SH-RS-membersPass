@@ -8,6 +8,7 @@ use App\Models\MembersPasses;
 use App\Models\PassTemplates;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use App\Actions\Admin\UpdatePassDatabase;
 
@@ -86,12 +87,12 @@ class OnboardingController extends Controller
 
         $member = Members::where('member_id', $request->member_id)->first();
         $template = PassTemplates::where('id', 1)->first();
-
         try {
             $generatedPasses = $this->passNinjaActions->createPass(
                 $template->type,
                 $member->name . ' ' . $member->surname,
-                $member->special_id ?? $member->id
+                $member->special_id ?? $member->id,
+                '01.01.2026'
             );
 
             $getPass = $this->passNinjaActions->getPass(
@@ -99,17 +100,17 @@ class OnboardingController extends Controller
                 $generatedPasses['serialNumber'],
             );
 
-        } catch (\Throwable $th) {
-            return redirect()->back()->with('error', $th->getMessage());
-        }
+            $storePass = $member->passes()->create([
+                'pass_type' => $getPass['passType'],
+                'serial_number' => $getPass['serialNumber'],
+                'issue_date' => Carbon::now(),
+                'url' => $generatedPasses['url'],
+                'nfc_payload' => $member->member_id,
+            ]);
 
-        $storePass = $member->passes()->create([
-            'pass_type' => $getPass['passType'],
-            'serial_number' => $getPass['serialNumber'],
-            'issue_date' => Carbon::now(),
-            'url' => $generatedPasses['url'],
-            'nfc_payload' => $member->member_id,
-        ]);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+        }
 
         return redirect()->route('onboarding.installPass', $getPass['serialNumber']);
     }

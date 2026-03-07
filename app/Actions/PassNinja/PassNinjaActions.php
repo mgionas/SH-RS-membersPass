@@ -25,15 +25,20 @@ class PassNinjaActions
 
     private function passPayload(string $type, string $name, string $memberId, ?string $expire = null): array
     {
-        return [
+        $payload = [
             'passType' => $type,
-            'pass' => array_filter([
-                'name'      => $name,
+            'pass' => [
+                'name' => $name,
                 'member-id' => $memberId,
-                'nfc-id'    => $memberId,
-                'expire'    => $expire,
-            ], fn ($v) => $v !== null),
+                'nfc-id' => $memberId,
+            ],
         ];
+
+        if ($expire) {
+            $payload['pass']['expire'] = $expire;
+        }
+
+        return $payload;
     }
 
     public function getTemplates(): array
@@ -59,7 +64,7 @@ class PassNinjaActions
     public function createPass(string $type, string $name, string $memberId, ?string $expire = null): array
     {
         return $this->http()
-            ->post($this->url("passes/{$type}"), $this->passPayload($type, $name, $memberId, $expire))
+            ->post($this->url("passes"), $this->passPayload($type, $name, $memberId, $expire))
             ->throw()
             ->json();
     }
