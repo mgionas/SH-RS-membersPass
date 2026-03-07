@@ -107,6 +107,8 @@ class MembersController extends Controller
             $pass->update(['status' => 'Removed']);
         }
 
+        $member->delete();
+
         return redirect()->route('members.index')->with('success', 'Member Removed successfully');
     }
 }
