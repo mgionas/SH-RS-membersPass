@@ -22,4 +22,9 @@ class MembersPasses extends Model
     {
         return $this->hasOne(PassTemplates::class, 'type', 'pass_type');
     }
+
+    public function member(): HasOne
+    {
+        return $this->hasOne(Members::class, 'id', 'member_id');
+    }
 }

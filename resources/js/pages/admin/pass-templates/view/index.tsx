@@ -60,25 +60,25 @@ export default function Dashboard({generatedPasses}:{generatedPasses:any}) {
                             <div key={e.serialNumber} className={'p-4 rounded-sm grid grid-cols-4 border border-gray-50/0 even:bg-neutral transition-all even:dark:bg-neutral-900 hover:border-blue-500'}>
                                 <div className={'flex flex-col'}>
                                     <span className={'text-xs text-neutral-600'}>id: {e.id}</span>
-                                    <span className={'text-sm'}>{e.serialNumber}</span>
+                                    <span className={'text-sm'}>{e.serial_number}</span>
                                 </div>
                                 <div className={'flex flex-col'}>
                                     <span className={'text-xs text-neutral-600'}>
-                                        Installed: {e.installedDate ? DateTime.fromISO(e.installedDate).toFormat('d LLL y, HH:mm') : '-'}
+                                        Installed: {e.installed_date ? DateTime.fromSQL(e.installed_date).toFormat('d LLL y, HH:mm') : '-'}
                                     </span>
                                     <span className={'text-sm'}>
-                                        Issued: {DateTime.fromISO(e.issuedDate).toFormat('d LLL y, HH:mm')}
+                                        Issued: {DateTime.fromSQL(e.issued_date).toFormat('d LLL y, HH:mm')}
                                     </span>
                                 </div>
                                 <div className={'flex flex-col items-center justify-center'}>
                                     <TemplateStatus status={e.status} />
                                 </div>
                                 <div className={'flex gap-2 justify-end'}>
-                                    <a href={e.urls.landing} target={'_blank'}>
-                                        <Button variant={'secondary'} size={'icon'} className={'cursor-pointer'}>
-                                            <LinkIcon />
-                                        </Button>
-                                    </a>
+                                    {/*<a href={e.urls.landing} target={'_blank'}>*/}
+                                    {/*    <Button variant={'secondary'} size={'icon'} className={'cursor-pointer'}>*/}
+                                    {/*        <LinkIcon />*/}
+                                    {/*    </Button>*/}
+                                    {/*</a>*/}
                                     <Button onClick={() => removeHandler(e)} variant={'secondary'} size={'icon'} className={'cursor-pointer'} disabled={loading || e.status === 'Removed'}>
                                         {(loading === e.id) ? (
                                             <LoaderCircle className={'animate-spin'}/>
@@ -86,6 +86,7 @@ export default function Dashboard({generatedPasses}:{generatedPasses:any}) {
                                             <TrashIcon />
                                         )}
                                     </Button>
+                                    {JSON.stringify(e.member)}
                                 </div>
                             </div>
                         ))}

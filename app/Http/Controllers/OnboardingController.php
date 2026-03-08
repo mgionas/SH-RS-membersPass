@@ -87,6 +87,7 @@ class OnboardingController extends Controller
 
         $member = Members::where('member_id', $request->member_id)->first();
         $template = PassTemplates::where('id', 1)->first();
+
         try {
             $generatedPasses = $this->passNinjaActions->createPass(
                 $template->type,

@@ -8,9 +8,6 @@ use App\Http\Controllers\Admin\EntriesController;
 Route::middleware('auth')->group(function () {
     Route::prefix('pass-templates')->name('passTemplates.')->group(function () {
         Route::get('/', [PassTemplatesController::class, 'index'])->name('index');
-        Route::post('/collectTemplates', [PassTemplatesController::class, 'collectTemplates'])->name('collectTemplates');
-
-//        Route::post('/store', [PassTemplatesController::class, 'store'])->name('store');
         Route::get('/{id}', [PassTemplatesController::class, 'viewTemplate'])->name('view');
         Route::post('/remove-template', [PassTemplatesController::class, 'removeTemplate'])->name('removeTemplate');
     });

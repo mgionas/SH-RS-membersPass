@@ -1,8 +1,7 @@
 import { type BreadcrumbItem } from '@/types';
 import { BrushCleaning } from 'lucide-react';
-import { view, collectTemplates } from '@/routes/passTemplates';
-import { Button } from '@/components/ui/button';
-import { Head, Link, router } from '@inertiajs/react';
+import { view } from '@/routes/passTemplates';
+import { Head, Link } from '@inertiajs/react';
 
 import AppLayout from '@/layouts/app-layout';
 
@@ -17,10 +16,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const handleUpdate = () => {
-    router.post(collectTemplates.url());
-}
-
 export default function Dashboard({passTemplates}:{passTemplates:any}) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -30,7 +25,7 @@ export default function Dashboard({passTemplates}:{passTemplates:any}) {
 
                 </div>
                 <div className={'flex gap-2'}>
-                    <Button onClick={() => handleUpdate()}>Update Collection</Button>
+
                 </div>
             </div>
             <div className="flex h-full flex-1 flex-col gap-4 px-4">
@@ -45,7 +40,7 @@ export default function Dashboard({passTemplates}:{passTemplates:any}) {
                         </div>
                         {/* Data */}
                         {passTemplates.map((passTemplate, i) => (
-                            <Link href={view(passTemplate.id)} key={i} className={'p-4 rounded-sm grid grid-cols-4 border border-gray-50/0 even:bg-neutral transition-all even:dark:bg-neutral-900 hover:border-blue-500'}>
+                            <Link href={view(passTemplate.type)} key={i} className={'p-4 rounded-sm grid grid-cols-4 border border-gray-50/0 even:bg-neutral transition-all even:dark:bg-neutral-900 hover:border-blue-500'}>
                                 <span>{passTemplate.title}</span>
                                 <span>{passTemplate.platform}</span>
                                 <span>{passTemplate.type}</span>
