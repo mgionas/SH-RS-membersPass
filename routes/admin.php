@@ -22,6 +22,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/sendSMSInvitation', [MembersController::class, 'sendSMSInvitation'])->name('sendSMSInvitation');
         Route::delete('/{id}', [MembersController::class, 'destory'])->name('destory');
 
+        // Approve / Reject Member
+        Route::post('/approveMember/{id}', [MembersController::class, 'approveMember'])->name('approveMember');
+        Route::post('/rejectMember/{id}', [MembersController::class, 'rejectMember'])->name('rejectMember');
+
     });
 
     Route::prefix('entries')->name('entries.')->group(function () {

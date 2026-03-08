@@ -47,7 +47,7 @@ export default function Dashboard({members}:{members:any}) {
                                 <span>{member.email}</span>
                                 <span>{member.phone}</span>
                                 <span>{member.language}</span>
-                                <span>{member.status}</span>
+                                <span>{member.approved}</span>
                             </Link>
                         ))}
                     </div>

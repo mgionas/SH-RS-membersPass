@@ -10,6 +10,7 @@ use App\Http\Requests\Members\StoreMemberRequest;
 use App\Http\Requests\Members\UpdateMemberRequest;
 use App\Mail\memberInvitationMail;
 use App\Models\Members;
+use App\Models\User;
 use App\Services\SmsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -25,7 +26,7 @@ class MembersController extends Controller
     public function index()
     {
         return Inertia::render('admin/members/index', [
-            'members' => Members::all(),
+            'members' => Members::where('approved', 'approved')->get(),
         ]);
     }
 
@@ -110,6 +111,26 @@ class MembersController extends Controller
         $member->delete();
 
         return redirect()->route('members.index')->with('success', 'Member Removed successfully');
+    }
+
+    public function approveMember(int $id)
+    {
+        $member = Members::where('id', $id)->first();
+
+        $member->update([
+            'approved' => 'approved',
+        ]);
+
+        return redirect()->route('members.view', $member->member_id)->with('success', 'Member approved successfully');
+    }
+
+    public function rejectMember(int $id)
+    {
+        Members::where('id', $id)->update([
+            'approved' => 'reject',
+        ]);
+
+        return redirect()->back()->with('success', 'Member rejected successfully');
     }
 }
 

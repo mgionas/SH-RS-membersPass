@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Members;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\Register\registerController;
@@ -11,7 +12,9 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
+        return Inertia::render('dashboard',[
+            'members' => Members::where('approved', 'pending')->get(),
+        ]);
     })->name('dashboard');
 });
 
