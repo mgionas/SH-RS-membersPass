@@ -94,12 +94,12 @@ class OnboardingController extends Controller
                 $member->special_id ?? $member->id,
                 '01.01.2026'
             );
-
+            Log::info($generatedPasses);
             $getPass = $this->passNinjaActions->getPass(
                 $generatedPasses['passType'],
                 $generatedPasses['serialNumber'],
             );
-
+            Log::info($getPass);
             $storePass = $member->passes()->create([
                 'pass_type' => $getPass['passType'],
                 'serial_number' => $getPass['serialNumber'],
@@ -107,7 +107,7 @@ class OnboardingController extends Controller
                 'url' => $generatedPasses['url'],
                 'nfc_payload' => $member->member_id,
             ]);
-
+            Log::info($storePass);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
         }
