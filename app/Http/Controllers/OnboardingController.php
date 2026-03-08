@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\PassNinja\PassNinjaActions;
+use App\Actions\Templates\TemplateActions;
 use App\Models\Members;
 use App\Models\MembersPasses;
 use App\Models\PassTemplates;
@@ -17,6 +18,7 @@ class OnboardingController extends Controller
     public function __construct(
         protected UpdatePassDatabase $updatePassDatabase,
         protected PassNinjaActions $passNinjaActions,
+        protected TemplateActions $templateActions
     ){}
 
     public function index(string $id)
@@ -45,37 +47,6 @@ class OnboardingController extends Controller
         // if Removed
         if ($getPass->status === 'Removed') return Inertia::render('error', ['error' => 'Pass removed!']);
 
-        // Update Pass Type Database
-        $this->updatePassDatabase->handle($getPass->pass_type);
-//        $passVendor = new PassVendor();
-//        try {
-//            $passes = $passVendor->getClient()->findPasses($getPass->pass_type);
-//
-//            // Map data
-//            $row = collect($passes)
-//                ->map(function ($pass) {
-//                    return [
-//                        'pass_type' => $pass['passType'],
-//                        'serial_number' => $pass['serialNumber'],
-//                        'issue_date' => Carbon::parse($pass['issuedDate'])->toDateTime(),
-//                        'installed_date' => Carbon::parse($pass['installedDate'])->toDateTime(),
-//                        'status' => $pass['status'],
-//                        'url' => $pass['urls']['landing'],
-//                        'nfc_payload' => $pass['serialNumber']
-//                    ];
-//                })->all();
-//
-//            MembersPasses::upsert(
-//                $row,
-//                ['serial_number'],
-//                ['pass_type', 'issue_date', 'installed_date', 'status', 'url'],
-//            );
-//
-//        } catch (\Throwable $th) {
-//            return Inertia::render('error', ['error' => 'Oops, Somwthing went wrong.']);
-//        }
-
-
         // return
         return Inertia::render('onboarding/install', [
             'pass' => $getPass,
@@ -93,27 +64,16 @@ class OnboardingController extends Controller
                 $template->type,
                 $member->name . ' ' . $member->surname,
                 $member->special_id ?? $member->id,
-                '01.01.2026'
+                Carbon::now()->addYear()->format('d M Y')
             );
-            Log::info($generatedPasses);
-            $getPass = $this->passNinjaActions->getPass(
-                $generatedPasses['passType'],
-                $generatedPasses['serialNumber'],
-            );
-            Log::info($getPass);
-            $storePass = $member->passes()->create([
-                'pass_type' => $getPass['passType'],
-                'serial_number' => $getPass['serialNumber'],
-                'issue_date' => Carbon::now(),
-                'url' => $generatedPasses['url'],
-                'nfc_payload' => $member->member_id,
-            ]);
-            Log::info($storePass);
+
+            $this->templateActions->checkPasses($template->type);
+
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
         }
 
-        return redirect()->route('onboarding.installPass', $getPass['serialNumber']);
+        return redirect()->route('onboarding.installPass', $generatedPasses['id']);
     }
 
     public function createIosPass(Request $request)
@@ -125,26 +85,16 @@ class OnboardingController extends Controller
             $generatedPasses = $this->passNinjaActions->createPass(
                 $template->type,
                 $member->name . ' ' . $member->surname,
-                $member->special_id ?? $member->id
+                $member->special_id ?? $member->id,
+                Carbon::now()->addYear()->format('d M Y')
             );
 
-            $getPass = $this->passNinjaActions->getPass(
-                $generatedPasses['passType'],
-                $generatedPasses['serialNumber'],
-            );
+            $this->templateActions->checkPasses($template->type);
 
         } catch (\Throwable $th) {
-            return redirect()->back()->with('error', $th->getMessage());
+            Log::error($th->getMessage());
         }
 
-        $storePass = $member->passes()->create([
-            'pass_type' => $getPass['passType'],
-            'serial_number' => $getPass['serialNumber'],
-            'issue_date' => Carbon::now(),
-            'url' => $getPass['urls']['landing'],
-            'nfc_payload' => $member->member_id,
-        ]);
-
-        return redirect()->route('onboarding.installPass', $getPass['serialNumber']);
+        return redirect()->route('onboarding.installPass', $generatedPasses['id']);
     }
 }
