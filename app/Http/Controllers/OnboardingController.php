@@ -69,6 +69,10 @@ class OnboardingController extends Controller
 
             $this->templateActions->checkPasses($template->type);
 
+            MembersPasses::where('serial_number', $generatedPasses['id'])->update([
+                'member_id' => $request->member_id
+            ]);
+
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
         }
@@ -90,6 +94,10 @@ class OnboardingController extends Controller
             );
 
             $this->templateActions->checkPasses($template->type);
+
+            MembersPasses::where('serial_number', $generatedPasses['id'])->update([
+                'member_id' => $request->member_id
+            ]);
 
         } catch (\Throwable $th) {
             Log::error($th->getMessage());

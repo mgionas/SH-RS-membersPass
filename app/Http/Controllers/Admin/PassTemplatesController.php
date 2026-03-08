@@ -33,7 +33,7 @@ class PassTemplatesController extends Controller
     }
 
     public function removeTemplate(Request $request){
-        $this->passNinjaActions->deletePass($request->passType, $request->serialNumber);
+        $this->passNinjaActions->deletePass($request->pass_type, $request->serial_number);
         return redirect()->back()->with('success','Template removed successfully');
     }
 

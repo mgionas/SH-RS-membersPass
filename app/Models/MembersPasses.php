@@ -25,6 +25,6 @@ class MembersPasses extends Model
 
     public function member(): HasOne
     {
-        return $this->hasOne(Members::class, 'id', 'member_id');
+        return $this->hasOne(Members::class, 'member_id', 'member_id');
     }
 }

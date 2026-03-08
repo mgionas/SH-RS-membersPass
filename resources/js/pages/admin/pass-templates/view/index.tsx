@@ -51,13 +51,14 @@ export default function Dashboard({generatedPasses}:{generatedPasses:any}) {
                 {generatedPasses ? (
                     <div className={''}>
                         {/* Header */}
-                        <div className={'p-4 rounded-sm font-bold grid grid-cols-4 even:bg-neutral even:dark:bg-neutral-900'}>
+                        <div className={'p-4 rounded-sm font-bold grid grid-cols-5 even:bg-neutral even:dark:bg-neutral-900'}>
                             <span>Identification</span>
                             <span>Info</span>
+                            <span className={'flex w-full justify-center'}>Member</span>
                             <span className={'flex w-full justify-center'}>Status</span>
                         </div>
                         {generatedPasses.map((e) => (
-                            <div key={e.serialNumber} className={'p-4 rounded-sm grid grid-cols-4 border border-gray-50/0 even:bg-neutral transition-all even:dark:bg-neutral-900 hover:border-blue-500'}>
+                            <div key={e.serialNumber} className={'p-4 rounded-sm grid grid-cols-5 border border-gray-50/0 even:bg-neutral transition-all even:dark:bg-neutral-900 hover:border-blue-500'}>
                                 <div className={'flex flex-col'}>
                                     <span className={'text-xs text-neutral-600'}>id: {e.id}</span>
                                     <span className={'text-sm'}>{e.serial_number}</span>
@@ -71,14 +72,17 @@ export default function Dashboard({generatedPasses}:{generatedPasses:any}) {
                                     </span>
                                 </div>
                                 <div className={'flex flex-col items-center justify-center'}>
+                                    {e.member?.name ? (e.member.name + ' ' + e.member.surname) : ('-')}
+                                </div>
+                                <div className={'flex flex-col items-center justify-center'}>
                                     <TemplateStatus status={e.status} />
                                 </div>
                                 <div className={'flex gap-2 justify-end'}>
-                                    {/*<a href={e.urls.landing} target={'_blank'}>*/}
-                                    {/*    <Button variant={'secondary'} size={'icon'} className={'cursor-pointer'}>*/}
-                                    {/*        <LinkIcon />*/}
-                                    {/*    </Button>*/}
-                                    {/*</a>*/}
+                                    <a href={e.landing} target={'_blank'}>
+                                        <Button variant={'secondary'} size={'icon'} className={'cursor-pointer'}>
+                                            <LinkIcon />
+                                        </Button>
+                                    </a>
                                     <Button onClick={() => removeHandler(e)} variant={'secondary'} size={'icon'} className={'cursor-pointer'} disabled={loading || e.status === 'Removed'}>
                                         {(loading === e.id) ? (
                                             <LoaderCircle className={'animate-spin'}/>
@@ -86,7 +90,6 @@ export default function Dashboard({generatedPasses}:{generatedPasses:any}) {
                                             <TrashIcon />
                                         )}
                                     </Button>
-                                    {JSON.stringify(e.member)}
                                 </div>
                             </div>
                         ))}
